@@ -1,0 +1,525 @@
+[
+  {
+    "title": "Core Go Fundamentals",
+    "subtopics": [
+      {
+        "title": "Language Basics & Syntax",
+        "leaves": [
+          "Control flow",
+          "Init functions",
+          "Zero value",
+          "Panic, Closures & Idiomatic Go",
+          "Struct tags"
+        ]
+      },
+      {
+        "title": "Data Structures Under the Hood",
+        "leaves": [
+          "Slices",
+          "Maps",
+          "Strings"
+        ]
+      },
+      {
+        "title": "Interfaces & Composition",
+        "leaves": [
+          "Interface Internals",
+          "Implicit Implementation & Patterns",
+          "Embedding & Composition"
+        ]
+      },
+      {
+        "title": "Error Handling",
+        "leaves": [
+          "Error Mechanics & Wrapping",
+          "Custom Errors & Strategies",
+          "Panic & Recover"
+        ]
+      },
+      {
+        "title": "Safety & Control",
+        "leaves": [
+          "Defer",
+          "Unsafe",
+          "Go Modules",
+          "Special & Rare Go Topics",
+          "Go Tooling & Code Quality"
+        ]
+      },
+      {
+        "title": "Special & Rare Topics",
+        "leaves": [
+          "CGO & Internal",
+          "Build Tags & Generics",
+          "WASM & Mobile"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Concurrency and Parallelism",
+    "subtopics": [
+      {
+        "title": "Go Runtime & Scheduler",
+        "leaves": [
+          "GMP Architecture",
+          "Work Stealing & Hand-off",
+          "Preemption & Sysmon"
+        ]
+      },
+      {
+        "title": "Goroutines",
+        "leaves": [
+          "Stack Management",
+          "Lifecycle & Leaks"
+        ]
+      },
+      {
+        "title": "Channels",
+        "leaves": [
+          "hchan Internals",
+          "State & Behavior",
+          "Design Patterns"
+        ]
+      },
+      {
+        "title": "Synchronization Primitives",
+        "leaves": [
+          "Mutex & RWMutex",
+          "WaitGroup & Once",
+          "Atomic & Cond"
+        ]
+      },
+      {
+        "title": "Memory Model & Consistency",
+        "leaves": [
+          "Happens-before & Barrier",
+          "Race & Consistency"
+        ]
+      },
+      {
+        "title": "Advanced patterns",
+        "leaves": [
+          "Worker Pool & Fan-in-out",
+          "Context & Error Group",
+          "Backpressure & Semaphores"
+        ]
+      },
+      {
+        "title": "Failures",
+        "leaves": [
+          "Deadlocks & Livelocks",
+          "Graceful Shutdown"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Memory and Performance",
+    "subtopics": [
+      {
+        "title": "Allocation & Ownership",
+        "leaves": [
+          "Stack vs Heap",
+          "Escape Analysis Details",
+          "Zero-copy & Strings"
+        ]
+      },
+      {
+        "title": "Garbage Collector",
+        "leaves": [
+          "Tri-color Algorithm",
+          "Write Barriers & Latency",
+          "GC Tuning & GOMEMLIMIT"
+        ]
+      },
+      {
+        "title": "Performance Optimization",
+        "leaves": [
+          "sync.Pool Internals",
+          "Alignment & Padding",
+          "Compiler Optimizations (BCE, Inlining)"
+        ]
+      },
+      {
+        "title": "Profiling",
+        "leaves": [
+          "CPU & Heap Profiling",
+          "Execution Tracer Deep Dive",
+          "Benchmarking & Pitfalls"
+        ]
+      },
+      {
+        "title": "Scale & OS",
+        "leaves": [
+          "Memory Fragmentation",
+          "Huge Pages & THP"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Standard Library and High Load Go",
+    "subtopics": [
+      {
+        "title": "Networking",
+        "leaves": [
+          "HTTP Internals & pooling",
+          "Keep-alive & Middleware",
+          "TCP, QUIC & TLS Deep Dive"
+        ]
+      },
+      {
+        "title": "Context Deep Dive",
+        "leaves": [
+          "Context Inheritance",
+          "Best Practices & Pitfalls"
+        ]
+      },
+      {
+        "title": "IO & Encoding",
+        "leaves": [
+          "I-O Interfaces & Streams",
+          "JSON & Performance"
+        ]
+      },
+      {
+        "title": "Database & Persistence",
+        "leaves": [
+          "database_sql & pooling",
+          "Transactions & Prepared Stmts"
+        ]
+      },
+      {
+        "title": "Go in Production at Scale",
+        "leaves": [
+          "Production Scale & Limits",
+          "Containerization & Scheduler"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Architecture and System Design",
+    "subtopics": [
+      {
+        "title": "Principles & Styles",
+        "leaves": [
+          "SOLID & Composition in Go",
+          "Design Patterns & Functional Options",
+          "Clean Architecture & DI"
+        ]
+      },
+      {
+        "title": "Distributed Systems",
+        "leaves": [
+          "CAP PACELC & Consistency Models",
+          "Distributed Transactions (Saga, 2PC)",
+          "Idempotency & Quorum"
+        ]
+      },
+      {
+        "title": "Communication & API Design",
+        "leaves": [
+          "REST vs gRPC vs WebSocket",
+          "API Versioning & Pagination",
+          "Error Modeling"
+        ]
+      },
+      {
+        "title": "High-Load & Resilience",
+        "leaves": [
+          "Rate Limiting & Load Balancing",
+          "Circuit Breaker & Bulkheads",
+          "Thundering Herd & Singleflight"
+        ]
+      },
+      {
+        "title": "Security & Observability",
+        "leaves": [
+          "Security Patterns & SLO",
+          "Anti-Abuse & Advanced Migration Patterns"
+        ]
+      },
+      {
+        "title": "Messaging & Async Patterns",
+        "leaves": [
+          "Kafka vs RabbitMQ",
+          "Message Delivery & Outbox",
+          "Retry & Backoff"
+        ]
+      },
+      {
+        "title": "Advanced Infrastructure",
+        "leaves": [
+          "Distributed Locking & Consensus",
+          "Large_Scale_Migrations"
+        ]
+      },
+      {
+        "title": "Trade-offs",
+        "leaves": [
+          "Trade-offs & Decision Making"
+        ]
+      },
+      {
+        "title": "System Design Cases",
+        "leaves": [
+          "Feed, Social & Messaging Systems",
+          "Media, Streaming & CDN",
+          "Location, Ride-sharing & Delivery",
+          "AI, Search & Data Systems",
+          "Infrastructure & Coordination Systems"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Data and Storage",
+    "subtopics": [
+      {
+        "title": "Database Choice",
+        "leaves": [
+          "SQL NoSQL NewSQL Comparison"
+        ]
+      },
+      {
+        "title": "Indexing",
+        "leaves": [
+          "B-Tree vs LSM-Tree Internals",
+          "Composite & Covering Indexes"
+        ]
+      },
+      {
+        "title": "SQL Deep Level",
+        "leaves": [
+          "Isolation Levels & MVCC",
+          "Window Functions & CTE",
+          "Query Optimization & Explain"
+        ]
+      },
+      {
+        "title": "Scaling Data",
+        "leaves": [
+          "Replication & Sharding",
+          "Consistent Hashing & CDC"
+        ]
+      },
+      {
+        "title": "Caching Deep Dive",
+        "leaves": [
+          "Caching Strategies & Bloom Filters"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Coding Interview",
+    "subtopics": [
+      {
+        "title": "Linear Patterns",
+        "leaves": [
+          "Two Pointers & Sliding Window",
+          "Linked Lists & Fast-Slow Pointers"
+        ]
+      },
+      {
+        "title": "Non-Linear",
+        "leaves": [
+          "Trees & Graphs",
+          "Heaps & Priority Queues"
+        ]
+      },
+      {
+        "title": "Advanced & Systemic",
+        "leaves": [
+          "LRU Cache & Trie",
+          "Dynamic Programming",
+          "Algorithms Preparation Strategy"
+        ]
+      },
+      {
+        "title": "Senior Coding Quality",
+        "leaves": [
+          "Big O & Optimization"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Production and Debugging",
+    "subtopics": [
+      {
+        "title": "Observability",
+        "leaves": [
+          "Logs Metrics & Tracing",
+          "RED USE & Golden Signals"
+        ]
+      },
+      {
+        "title": "Incident & Debugging",
+        "leaves": [
+          "Debugging Goroutine Leaks & OOM",
+          "Deadlocks & Post-mortem Culture"
+        ]
+      },
+      {
+        "title": "Production Tooling",
+        "leaves": [
+          "pprof & Delve in Production",
+          "SLO Error Budgets & Post-mortem",
+          "Operational_Excellence"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Testing and Code Quality",
+    "subtopics": [
+      {
+        "title": "Test Pyramid",
+        "leaves": [
+          "Unit Integration & E2E Testing"
+        ]
+      },
+      {
+        "title": "Mocking",
+        "leaves": [
+          "Mocking Patterns & httptest"
+        ]
+      },
+      {
+        "title": "Advanced Testing",
+        "leaves": [
+          "Table-driven & Fuzz Testing"
+        ]
+      },
+      {
+        "title": "Engineering Standards",
+        "leaves": [
+          "Code Review & Documentation (ADR)"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "DevOps and Infrastructure",
+    "subtopics": [
+      {
+        "title": "Containerization",
+        "leaves": [
+          "Docker Optimization & Security"
+        ]
+      },
+      {
+        "title": "Orchestration",
+        "leaves": [
+          "Kubernetes Essentials for Go Devs",
+          "K8s Probes & Resource Limits"
+        ]
+      },
+      {
+        "title": "CI-CD & Delivery",
+        "leaves": [
+          "CI-CD & Deployment Strategies"
+        ]
+      },
+      {
+        "title": "Tools & Git",
+        "leaves": [
+          "Linux CLI & Git Workflows",
+          "Platform Engineering & GitOps"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Technical Leadership",
+    "subtopics": [
+      {
+        "title": "System Architecture",
+        "leaves": [
+          "Architecture Strategy & Risks",
+          "Design_Docs_RFC",
+          "Cross_Team_Architecture"
+        ]
+      },
+      {
+        "title": "Planning & Execution",
+        "leaves": [
+          "Planning & Tech Debt Management"
+        ]
+      },
+      {
+        "title": "People & Culture",
+        "leaves": [
+          "Mentoring Conflict & Stakeholders",
+          "Staff_Leadership"
+        ]
+      },
+      {
+        "title": "Execution Under Uncertainty",
+        "leaves": [
+          "Decision Making & Ambiguity"
+        ]
+      },
+      {
+        "title": "Engineering at Scale",
+        "leaves": [
+          "Team Topologies & Conway's Law"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Behavioral and Storytelling",
+    "subtopics": [
+      {
+        "title": "STAR Method",
+        "leaves": [
+          "STAR Method & Metrics"
+        ]
+      },
+      {
+        "title": "Categories",
+        "leaves": [
+          "Technical Stories & Performance",
+          "Crisis Failure & Learning",
+          "People Leadership & Conflict",
+          "Ready STAR Story Templates",
+          "Amazon Leadership Principles & Killer Questions"
+        ]
+      },
+      {
+        "title": "Tips & Principles",
+        "leaves": [
+          "Senior Storytelling Tips"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Common Interview Traps",
+    "subtopics": [
+      {
+        "title": "Technical Traps",
+        "leaves": [
+          "Channels vs Mutex & Overengineering",
+          "Real Interview Scenarios Q&A"
+        ]
+      },
+      {
+        "title": "Logic & Approach Traps",
+        "leaves": [
+          "Scalability & Trade-offs Approach"
+        ]
+      },
+      {
+        "title": "Real-world Production Traps",
+        "leaves": [
+          "Real-world Production Pitfalls"
+        ]
+      }
+    ]
+  }
+]

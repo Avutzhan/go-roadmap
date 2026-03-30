@@ -1,0 +1,16 @@
+﻿# 10. DevOps & Infrastructure (Staff-level Roadmap)
+
+Ð Ð°Ð·Ð´ÐµÐ» Ð¿Ð¾ÑÐ²ÑÑ‰ÐµÐ½ Ð¾ÐºÑ€ÑƒÐ¶ÐµÐ½Ð¸ÑŽ, Ð² ÐºÐ¾Ñ‚Ð¾Ñ€Ð¾Ð¼ Ð¶Ð¸Ð²ÑƒÑ‚ Go-Ð¿Ñ€Ð¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ñ: ÐºÐ¾Ð½Ñ‚ÐµÐ¹Ð½ÐµÑ€Ð¸Ð·Ð°Ñ†Ð¸Ð¸, Ð¾Ñ€ÐºÐµÑÑ‚Ñ€Ð°Ñ†Ð¸Ð¸ Ð¸ ÐºÑƒÐ»ÑŒÑ‚ÑƒÑ€Ðµ Ð´Ð¾ÑÑ‚Ð°Ð²ÐºÐ¸ ÐºÐ¾Ð´Ð°.
+
+### 10.1 Containerization
+*   1 Docker Optimization & Security.md â€” Multi-stage ÑÐ±Ð¾Ñ€ÐºÐ¸ Ð¸ Ð±ÐµÐ·Ð¾Ð¿Ð°ÑÐ½Ð¾ÑÑ‚ÑŒ Ð¾Ð±Ñ€Ð°Ð·Ð¾Ð². âœ…
+
+### 10.2 Orchestration
+*   1 Kubernetes Essentials for Go Devs.md â€” Ð–Ð¸Ð·Ð½ÐµÐ½Ð½Ñ‹Ð¹ Ñ†Ð¸ÐºÐ» ÐŸÐ¾Ð´Ð° Ð¸ ÑÐµÑ€Ð²Ð¸ÑÑ‹. âœ…
+*   2 K8s Probes & Resource Limits.md â€” ÐÐ°ÑÑ‚Ñ€Ð¾Ð¹ÐºÐ° Ð·Ð´Ð¾Ñ€Ð¾Ð²ÑŒÑ Ð¸ Ñ€ÐµÑÑƒÑ€ÑÐ¾Ð². âœ…
+
+### 10.3 CI/CD & Delivery
+*   1 CI-CD & Deployment Strategies.md â€” ÐžÑ‚ Canary Ð´Ð¾ Feature Flags. âœ…
+
+### 10.4 Tools & Git
+*   1 Linux CLI & Git Workflows.md â€” Ð˜Ð½ÑÑ‚Ñ€ÑƒÐ¼ÐµÐ½Ñ‚Ð°Ñ€Ð¸Ð¹ Ð²Ñ‹Ð¶Ð¸Ð²Ð°Ð½Ð¸Ñ Ð² ÐºÐ¾Ð½ÑÐ¾Ð»Ð¸ Ð¸ Git ÑÑ‚Ñ€Ð°Ñ‚ÐµÐ³Ð¸Ð¸. âœ…
