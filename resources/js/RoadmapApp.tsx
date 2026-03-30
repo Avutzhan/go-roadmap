@@ -28,8 +28,8 @@ export const { nodes, edges, maxY } = (() => {
   const genNodes: RoadmapNode[] = [];
   const genEdges: RoadmapEdge[] = [];
   
-  let currentY = 120;
-  let currentRowBottom = currentY;
+  let currentRowY = 120;
+  let maxBottomInRow = 120;
   
   rawRoadmap.forEach((topic: any, i: number) => {
     // 3 Columns per row approach
@@ -37,67 +37,89 @@ export const { nodes, edges, maxY } = (() => {
     const posInRow = i % 3;
     const isLeftToRight = row % 2 === 0;
     
+    // Keep nodes tightly positioned in 3 columns
     const col = isLeftToRight ? posInRow : (2 - posInRow);
-    const mainX = 280 + col * 550; // columns at 280, 830, 1380
+    const mainX = 280 + col * 550;
     
-    if (posInRow === 0) {
-      currentY = currentRowBottom + (i > 0 ? 120 : 0);
+    // Jump row to safe margin below the deepest container of the PREVIOUS row
+    if (posInRow === 0 && i > 0) {
+      currentRowY = maxBottomInRow + 140;
     }
     
     const mainId = `m_${i}`;
     
+    let displayTitle = topic.title;
+    if (displayTitle === "Core Go Fundamentals") {
+      displayTitle = "Go Fundamentals";
+    }
+    displayTitle = displayTitle.replace(/\s+and\s+/gi, ' & ');
+    
+    const calculatedWidth = Math.max(220, displayTitle.length * 10 + 40);
+    
     genNodes.push({
       id: mainId,
       type: 'main',
-      title: topic.title,
+      title: displayTitle,
       description: "Core timeframe milestone.",
       x: mainX,
-      y: currentY,
-      w: 220,
+      y: currentRowY,
+      w: calculatedWidth,
       h: 56,
       status: i === 0 ? 'done' : 'pending'
     });
     
     if (i > 0) genEdges.push({ from: `m_${i-1}`, to: mainId });
     
-    let leftSubY = currentY + 80;
-    let rightSubY = currentY + 80;
+    let leftSubY = currentRowY + 80;
+    let rightSubY = currentRowY + 80;
     
     topic.subtopics.forEach((sub: any, j: number) => {
       const isLeft = j % 2 === 0;
-      const boxWidth = 250; 
+      const boxWidth = 260; 
       const boxX = mainX + (isLeft ? -135 : 135);
       
-      const titleHeight = 40;
-      const itemSpacing = 36;
-      const containerHeight = titleHeight + (sub.leaves.length * itemSpacing) + 12;
+      const titleHeight = 44;
+      const itemSpacing = 40; // 32px height + 8px gap
+      const bottomPadding = 20;
+      const containerHeight = titleHeight + (sub.leaves.length * itemSpacing) + bottomPadding;
       
       let startY = isLeft ? leftSubY : rightSubY;
       const boxCenterY = startY + (containerHeight / 2);
       
       const subId = `s_${i}_${j}`;
+      const displaySubTitle = sub.title.replace(/\s+and\s+/gi, ' & ');
+      
       genNodes.push({
         id: subId,
         type: 'container',
-        title: sub.title,
+        title: displaySubTitle,
         x: boxX,
         y: boxCenterY,
         w: boxWidth,
         h: containerHeight,
         status: 'optional',
       });
-      genEdges.push({ from: mainId, to: subId });
       
-      let leafY = startY + 50; 
+      // Smart edge routing: Main hub only branches to the TOP element in the left/right column.
+      // Every subsequent container daisy-chains strictly vertically from the container above it!
+      if (j < 2) {
+        genEdges.push({ from: mainId, to: subId });
+      } else {
+        genEdges.push({ from: `s_${i}_${j-2}`, to: subId });
+      }
+      
+      let leafY = startY + titleHeight + 16; 
       sub.leaves.forEach((leafStr: string, k: number) => {
+        const displayLeaf = leafStr.replace(/\s+and\s+/gi, ' & ');
+        
         genNodes.push({
           id: `l_${i}_${j}_${k}`,
           type: 'leaf',
-          title: leafStr,
+          title: displayLeaf,
           x: boxX,
           y: leafY,
-          w: boxWidth - 30,
-          h: 28,
+          w: boxWidth - 24, // Slight padding from edges
+          h: 32, // Taller, meatier pill like the reference
           status: 'pending'
         });
         leafY += itemSpacing;
@@ -108,12 +130,12 @@ export const { nodes, edges, maxY } = (() => {
     });
     
     const treeBottom = Math.max(leftSubY, rightSubY);
-    if (treeBottom > currentRowBottom) {
-      currentRowBottom = treeBottom;
+    if (treeBottom > maxBottomInRow) {
+      maxBottomInRow = treeBottom;
     }
   });
   
-  return { nodes: genNodes, edges: genEdges, maxY: currentRowBottom };
+  return { nodes: genNodes, edges: genEdges, maxY: maxBottomInRow };
 })();
 
 // ==============================
@@ -137,14 +159,13 @@ const RoadmapNodeComponent: React.FC<NodeProps> = ({ node, onClick, isHovered, o
         <rect x={-w / 2 + 5} y={-h / 2 + 5} width={w} height={h} rx={6} fill="#000" />
         <rect x={-w / 2} y={-h / 2} width={w} height={h} rx={6} fill="#ffffff" stroke="#000" strokeWidth="2" />
         
-        <path 
-           d={`M ${-w/2} ${-h/2 + 6} A 6 6 0 0 1 ${-w/2 + 6} ${-h/2} L ${w/2 - 6} ${-h/2} A 6 6 0 0 1 ${w/2} ${-h/2 + 6} L ${w/2} ${-h/2 + 36} L ${-w/2} ${-h/2 + 36} Z`} 
-           fill="#f8fafc" 
-        />
-        <line x1={-w / 2} y1={-h / 2 + 36} x2={w / 2} y2={-h / 2 + 36} stroke="#000" strokeWidth="2" />
-        
-        <text x={0} y={-h / 2 + 18} textAnchor="middle" dominantBaseline="middle" fill="#000" fontSize="13" fontWeight="bold" fontFamily="sans-serif">
-          {node.title.length > 30 ? node.title.substring(0,27)+'...' : node.title.toUpperCase()}
+        {/* Simple crisp text matching the reference image */}
+        <text 
+          x={0} y={-h / 2 + 22} 
+          textAnchor="middle" dominantBaseline="middle" 
+          fill="#000" fontSize="14" fontWeight="600" fontFamily="sans-serif"
+        >
+          {node.title.length > 30 ? node.title.substring(0,27)+'...' : node.title}
         </text>
       </g>
     );
@@ -171,6 +192,9 @@ const RoadmapNodeComponent: React.FC<NodeProps> = ({ node, onClick, isHovered, o
   }
 
   const isLeafHover = isHovered;
+  // Pale yellow styling mirroring the user's reference!
+  const leafBg = isLeafHover ? '#fef08a' : '#fde68a';
+  
   return (
     <g
       transform={`translate(${node.x}, ${node.y})`}
@@ -180,17 +204,16 @@ const RoadmapNodeComponent: React.FC<NodeProps> = ({ node, onClick, isHovered, o
       className="cursor-pointer group"
     >
       <rect 
-        x={( -w / 2) + (isLeafHover ? 2 : 0)} y={( -h / 2) + (isLeafHover ? 2 : 0)} 
+        x={-w / 2} y={-h / 2} 
         width={w} height={h} rx={4} 
-        fill={isLeafHover ? '#e0f2fe' : '#f1f5f9'} 
+        fill={leafBg} 
         stroke="#000" strokeWidth="1.5"
         className="transition-all duration-150"
       />
-      <circle cx={-w / 2 + 14 + (isLeafHover ? 2 : 0)} cy={isLeafHover ? 2 : 0} r={3} fill="#000" className="transition-all duration-150" />
       <text
-        x={-w / 2 + 25 + (isLeafHover ? 2 : 0)} y={isLeafHover ? 3 : 1}
-        textAnchor="start" dominantBaseline="middle"
-        fill="#0f172a" fontSize="12" fontWeight="600" fontFamily="sans-serif"
+        x={0} y={1}
+        textAnchor="middle" dominantBaseline="middle"
+        fill="#000" fontSize="13" fontWeight="500" fontFamily="sans-serif"
         className="transition-all pointer-events-none"
       >
         {node.title.length > 32 ? node.title.substring(0, 30) + "..." : node.title}
@@ -224,7 +247,10 @@ const RoadmapEdgeComponent: React.FC<EdgeProps> = ({ edge, nodes }) => {
       // Dropping down a row at the far edges!
       const isRightEdge = fromNode.x > 1000;
       const startX = fromNode.x + (isRightEdge ? fromNode.w!/2 : -fromNode.w!/2);
-      const dropMargin = isRightEdge ? 360 : -360; 
+      
+      // We push the control points massively wide (480px) to form a very rounded loop
+      // that avoids ALL sub-topics like 'Garbage Collector' which reach up to ~270px out.
+      const dropMargin = isRightEdge ? 480 : -480; 
       const outX = fromNode.x + dropMargin;
       const endX = toNode.x + (isRightEdge ? toNode.w!/2 : -toNode.w!/2);
       
@@ -326,11 +352,11 @@ export default function Roadmap() {
         </p>
       </div>
       
-      <div className="flex-1 w-full max-w-[1800px] mx-auto overflow-x-auto overflow-y-hidden px-4 md:px-8">
-        <div className="min-w-[1200px] w-full">
+      <div className="flex-1 w-full max-w-[2000px] mx-auto overflow-x-auto overflow-y-hidden px-4 md:px-8">
+        <div className="min-w-[1400px] w-full">
           <svg
             className="w-full h-auto mx-auto outline-none block drop-shadow-sm"
-            viewBox={`-100 50 1900 ${contentHeight}`}
+            viewBox={`-200 50 2050 ${contentHeight}`}
             preserveAspectRatio="xMidYMid meet"
           >
             <g>
