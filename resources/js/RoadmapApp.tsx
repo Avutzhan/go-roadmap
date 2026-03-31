@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import rawRoadmap from './roadmapData.json';
 
 // ==============================
@@ -147,23 +147,36 @@ interface NodeProps {
   onClick: (node: RoadmapNode) => void;
   isHovered: boolean;
   onHover: (id: string | null) => void;
+  isCompleted?: boolean;
+  onToggleComplete?: (id: string, e: React.MouseEvent) => void;
 }
 
-const RoadmapNodeComponent: React.FC<NodeProps> = ({ node, onClick, isHovered, onHover }) => {
+const RoadmapNodeComponent: React.FC<NodeProps> = ({ node, onClick, isHovered, onHover, isCompleted, onToggleComplete }) => {
   const w = node.w || 120;
   const h = node.h || 40;
   
   if (node.type === 'container') {
+    let containerBg = "#ffffff";
+    let containerStroke = "#000";
+    let titleColor = "#000";
+    
+    if (isCompleted) {
+      containerBg = "#f0fdf4"; // green-50
+      containerStroke = "#16a34a"; // green-600
+      titleColor = "#15803d"; // green-700
+    }
+
     return (
       <g transform={`translate(${node.x}, ${node.y})`}>
-        <rect x={-w / 2 + 5} y={-h / 2 + 5} width={w} height={h} rx={6} fill="#000" />
-        <rect x={-w / 2} y={-h / 2} width={w} height={h} rx={6} fill="#ffffff" stroke="#000" strokeWidth="2" />
+        <rect x={-w / 2 + 5} y={-h / 2 + 5} width={w} height={h} rx={6} fill="#000" className="transition-all duration-300" />
+        <rect id={`container_rect_${node.id}`} x={-w / 2} y={-h / 2} width={w} height={h} rx={6} fill={containerBg} stroke={containerStroke} strokeWidth="2" className="transition-all duration-500" />
         
         {/* Simple crisp text matching the reference image */}
         <text 
           x={0} y={-h / 2 + 22} 
           textAnchor="middle" dominantBaseline="middle" 
-          fill="#000" fontSize="14" fontWeight="600" fontFamily="sans-serif"
+          fill={titleColor} fontSize="14" fontWeight="600" fontFamily="sans-serif"
+          className="transition-colors duration-500"
         >
           {node.title.length > 30 ? node.title.substring(0,27)+'...' : node.title}
         </text>
@@ -193,7 +206,15 @@ const RoadmapNodeComponent: React.FC<NodeProps> = ({ node, onClick, isHovered, o
 
   const isLeafHover = isHovered;
   // Pale yellow styling mirroring the user's reference!
-  const leafBg = isLeafHover ? '#fef08a' : '#fde68a';
+  let leafBg = isLeafHover ? '#fef08a' : '#fde68a';
+  let leafStroke = "#000";
+  let textColor = "#000";
+  
+  if (isCompleted) {
+    leafBg = isLeafHover ? '#bbf7d0' : '#86efac'; // soft green when completed
+    leafStroke = "#166534"; // dark green border
+    textColor = "#14532d";
+  }
   
   return (
     <g
@@ -207,17 +228,71 @@ const RoadmapNodeComponent: React.FC<NodeProps> = ({ node, onClick, isHovered, o
         x={-w / 2} y={-h / 2} 
         width={w} height={h} rx={4} 
         fill={leafBg} 
-        stroke="#000" strokeWidth="1.5"
+        stroke={leafStroke} strokeWidth="1.5"
         className="transition-all duration-150"
       />
+      
+      {/* Interactive Checkbox with expanded invisible hit area */}
+      <g 
+        transform={`translate(${-w/2 + 16}, 0)`} 
+        onClick={(e) => onToggleComplete && onToggleComplete(node.id, e)}
+        className="cursor-pointer hover:opacity-80 transition-opacity"
+      >
+        {/* Invisible square spanning the full height to make clicking super easy */}
+        <rect x={-16} y={-h/2} width={36} height={h} fill="transparent" />
+        <circle cx={0} cy={0} r={8} fill={isCompleted ? "#22c55e" : "#fff"} stroke={leafStroke} strokeWidth="1.5" />
+        {isCompleted && (
+          <path d="M-3 0.5 L-1 2.5 L3 -2.5" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        )}
+      </g>
+
       <text
-        x={0} y={1}
+        x={8} y={1} // Shifted slightly right to balance the checkbox
         textAnchor="middle" dominantBaseline="middle"
-        fill="#000" fontSize="13" fontWeight="500" fontFamily="sans-serif"
+        fill={textColor} fontSize="13" fontWeight="500" fontFamily="sans-serif"
         className="transition-all pointer-events-none"
       >
-        {node.title.length > 32 ? node.title.substring(0, 30) + "..." : node.title}
+        {node.title.length > 28 ? node.title.substring(0, 26) + "..." : node.title}
       </text>
+    </g>
+  );
+};
+
+// Localized SVG Fireworks Effect (Intense, Bright Colors)
+const SvgConfetti = ({ x, y }: { x: number, y: number }) => {
+  return (
+    <g transform={`translate(${x}, ${y})`}>
+      <style>
+        {`
+          @keyframes confetti-burst {
+            0% { transform: translate(0px, 0px) scale(0.5); opacity: 1; }
+            100% { transform: translate(var(--dx), var(--dy)) scale(1.5); opacity: 0; }
+          }
+        `}
+      </style>
+      {Array.from({ length: 60 }).map((_, i) => {
+        const angle = (i * 360) / 60; 
+        const rad = angle * Math.PI / 180;
+        const dist = 50 + Math.random() * 90; // Localized radius
+        const dx = Math.cos(rad) * dist;
+        const dy = Math.sin(rad) * dist;
+        
+        // 100% maximum saturation/brightness neon colors for explosive visual impact
+        const colors = ['#FF0000', '#00FF00', '#0044FF', '#FF00FF', '#FFB800', '#00FFFF'];
+        const color = colors[i % colors.length];
+        
+        return (
+          <circle
+            key={i}
+            cx={0} cy={0} r={3.5 + Math.random() * 4.5} fill={color}
+            style={{
+              '--dx': `${dx}px`,
+              '--dy': `${dy}px`,
+              animation: `confetti-burst 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards`
+            } as any}
+          />
+        );
+      })}
     </g>
   );
 };
@@ -335,9 +410,68 @@ const RoadmapModal: React.FC<ModalProps> = ({ node, onClose }) => {
 // ==============================
 // 3. Main Export
 // ==============================
-export default function Roadmap() {
+export default function RoadmapApp() {
+  const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const [selectedNode, setSelectedNode] = useState<RoadmapNode | null>(null);
-  const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
+  const [completedNodes, setCompletedNodes] = useState<Set<string>>(new Set());
+  const [activeConfetti, setActiveConfetti] = useState<{ id: string, x: number, y: number } | null>(null);
+
+  // Load MVP state from SQLite via Laravel
+  useEffect(() => {
+    fetch('/api/progress')
+      .then(res => res.json())
+      .then((data: string[]) => {
+        setCompletedNodes(new Set(data));
+      })
+      .catch(err => console.error("Could not load backend progress", err));
+  }, []);
+
+  const toggleNodeCompletion = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCompletedNodes(prev => {
+      const newSet = new Set(prev);
+      const isCompletedNow = !newSet.has(id);
+      
+      if (isCompletedNow) newSet.add(id);
+      else newSet.delete(id);
+      
+      // Check if this action completed an entire container block!
+      if (isCompletedNow && id.startsWith('l_')) {
+        const match = id.match(/^l_(\d+)_(\d+)_/);
+        if (match) {
+          const i = parseInt(match[1]);
+          const j = parseInt(match[2]);
+          const leafCount = rawRoadmap[i].subtopics[j].leaves.length;
+          
+          let allDoneNow = true;
+          for(let k=0; k<leafCount; k++) {
+            if (!newSet.has(`l_${i}_${j}_${k}`)) {
+              allDoneNow = false;
+              break;
+            }
+          }
+          
+          if (allDoneNow) {
+            // Revert back to precise localized SVG burst, but brighter!
+            const cNode = nodes.find(n => n.id === `s_${i}_${j}`);
+            if (cNode) {
+              setActiveConfetti({ id: Date.now().toString(), x: cNode.x, y: cNode.y - (cNode.h!/2) + 20 });
+              setTimeout(() => setActiveConfetti(null), 1500); // clear after 1.5s
+            }
+          }
+        }
+      }
+
+      // Persist to SQLite MVP Backend
+      fetch('/api/progress', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ node_id: id, completed: isCompletedNow })
+      }).catch(err => console.error("Could not save backend progress", err));
+      
+      return newSet;
+    });
+  };
 
   const contentHeight = maxY + 150;
 
@@ -360,23 +494,51 @@ export default function Roadmap() {
             preserveAspectRatio="xMidYMid meet"
           >
             <g>
-              <g className="edges-layer">
-                {edges.map((edge, i) => (
-                  <RoadmapEdgeComponent key={`edge-${i}`} edge={edge} nodes={nodes} />
+              <g className="edges-layer pointer-events-none">
+                {edges.map((edge, idx) => (
+                  <RoadmapEdgeComponent key={idx} edge={edge} nodes={nodes} />
                 ))}
               </g>
 
               <g className="nodes-layer">
-                {nodes.map(node => (
-                  <RoadmapNodeComponent
-                    key={node.id}
-                    node={node}
-                    onClick={setSelectedNode}
-                    isHovered={hoveredNodeId === node.id}
-                    onHover={setHoveredNodeId}
-                  />
-                ))}
+                {nodes.map(node => {
+                  let isDone = completedNodes.has(node.id);
+                  
+                  // For containers, determine completion based on if all leaves are checked
+                  if (node.type === 'container') {
+                    const match = node.id.match(/^s_(\d+)_(\d+)$/);
+                    if (match) {
+                      const i = parseInt(match[1]);
+                      const j = parseInt(match[2]);
+                      const leafCount = rawRoadmap[i].subtopics[j].leaves.length;
+                      isDone = true;
+                      for(let k=0; k<leafCount; k++) {
+                        if (!completedNodes.has(`l_${i}_${j}_${k}`)) {
+                          isDone = false;
+                          break;
+                        }
+                      }
+                    }
+                  }
+
+                  return (
+                    <RoadmapNodeComponent 
+                      key={node.id} 
+                      node={node} 
+                      onClick={setSelectedNode}
+                      isHovered={hoveredNode === node.id}
+                      onHover={setHoveredNode}
+                      isCompleted={isDone}
+                      onToggleComplete={toggleNodeCompletion}
+                    />
+                  );
+                })}
               </g>
+              
+              {/* Overlay localized vibrant fireworks on top */}
+              {activeConfetti && (
+                <SvgConfetti key={activeConfetti.id} x={activeConfetti.x} y={activeConfetti.y} />
+              )}
             </g>
           </svg>
         </div>

@@ -5,6 +5,8 @@
       {
         "title": "Language Basics & Syntax",
         "leaves": [
+          "Variable Shadowing & Scope",
+          "Constants (iota)",
           "Control flow",
           "Init functions",
           "Zero value",
