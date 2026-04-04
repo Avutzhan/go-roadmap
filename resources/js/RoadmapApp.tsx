@@ -407,6 +407,67 @@ const RoadmapModal: React.FC<ModalProps> = ({ node, onClose }) => {
   );
 };
 
+const ConfirmModal: React.FC<{
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  isUnchecking: boolean;
+}> = ({ isOpen, onClose, onConfirm, isUnchecking }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div 
+        className="absolute inset-0 bg-slate-900/60 transition-opacity"
+        onClick={onClose}
+      />
+      <div 
+        className="relative bg-white rounded-xl p-8 w-full max-w-md m-4 border-2 border-slate-900 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
+        role="dialog"
+      >
+        <button 
+          onClick={onClose}
+          className="absolute top-4 right-4 p-2 text-slate-500 hover:text-slate-900 transition-colors focus:outline-none"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+        
+        <div className="flex items-center gap-3 mb-4">
+          <h3 className="text-2xl font-black text-slate-900 tracking-tight">Are you sure?</h3>
+        </div>
+        
+        <div className="bg-slate-50 rounded-lg p-5 border-2 border-slate-200 mt-6">
+          <p className="text-slate-700 text-base leading-relaxed font-medium">
+            {isUnchecking 
+              ? "You are about to uncheck all topics. This will reset your progress. Do you want to proceed?" 
+              : "You are about to mark all topics as completed. Do you want to proceed?"}
+          </p>
+        </div>
+        
+        <div className="mt-8 flex justify-end gap-3">
+          <button 
+            onClick={onClose}
+            className="px-6 py-3 bg-white hover:bg-slate-50 text-slate-900 rounded-lg text-sm font-bold transition-colors border-2 border-slate-300 shadow-[4px_4px_0px_0px_rgba(203,213,225,1)] hover:shadow-[0px_0px_0px_0px_rgba(0,0,0,0)]"
+          >
+            Cancel
+          </button>
+          <button 
+            onClick={() => {
+              onConfirm();
+              onClose();
+            }}
+            className="px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-sm font-bold transition-colors border-2 border-slate-900 shadow-[4px_4px_0px_0px_rgba(251,191,36,1)] hover:shadow-[0px_0px_0px_0px_rgba(0,0,0,0)]"
+          >
+            Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // ==============================
 // 3. Main Export
 // ==============================
@@ -415,6 +476,7 @@ export default function RoadmapApp() {
   const [selectedNode, setSelectedNode] = useState<RoadmapNode | null>(null);
   const [completedNodes, setCompletedNodes] = useState<Set<string>>(new Set());
   const [activeConfetti, setActiveConfetti] = useState<{ id: string, x: number, y: number } | null>(null);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
   // Load MVP state from SQLite via Laravel
   useEffect(() => {
@@ -473,6 +535,28 @@ export default function RoadmapApp() {
     });
   };
 
+  const leafNodes = nodes.filter(n => n.type === 'leaf');
+  const allChecked = leafNodes.length > 0 && leafNodes.every(leaf => completedNodes.has(leaf.id));
+
+  const handleToggleAll = () => {
+    if (allChecked) {
+      setCompletedNodes(new Set());
+      fetch('/api/progress/bulk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'uncheck_all' })
+      }).catch(err => console.error("Could not save backend progress", err));
+    } else {
+      const allLeafIds = leafNodes.map(n => n.id);
+      setCompletedNodes(new Set(allLeafIds));
+      fetch('/api/progress/bulk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'check_all', node_ids: allLeafIds })
+      }).catch(err => console.error("Could not save backend progress", err));
+    }
+  };
+
   const contentHeight = maxY + 150;
 
   return (
@@ -484,6 +568,14 @@ export default function RoadmapApp() {
         <p className="text-slate-600 mt-6 font-bold text-lg max-w-xl mx-auto border-b-2 border-slate-900 pb-4 inline-block">
           Complete path to Senior Level (150+ Deep Topics & Hand-crafted files)
         </p>
+        <div className="mt-6 flex justify-center">
+          <button 
+            onClick={() => setIsConfirmModalOpen(true)}
+            className="px-4 py-2 bg-white text-slate-700 font-semibold border-2 border-slate-900 rounded shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[0px_0px_0px_0px_rgba(0,0,0,0)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all text-sm"
+          >
+            {allChecked ? 'Uncheck All' : 'Check All'}
+          </button>
+        </div>
       </div>
       
       <div className="flex-1 w-full max-w-[2000px] mx-auto overflow-x-auto overflow-y-hidden px-4 md:px-8">
@@ -547,6 +639,13 @@ export default function RoadmapApp() {
       <RoadmapModal 
         node={selectedNode} 
         onClose={() => setSelectedNode(null)} 
+      />
+
+      <ConfirmModal
+        isOpen={isConfirmModalOpen}
+        onClose={() => setIsConfirmModalOpen(false)}
+        onConfirm={handleToggleAll}
+        isUnchecking={allChecked}
       />
     </div>
   );
