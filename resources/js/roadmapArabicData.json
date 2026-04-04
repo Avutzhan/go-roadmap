@@ -1,0 +1,109 @@
+[
+  {
+    "title": "Alif Ba (Start Reading)",
+    "subtopics": [
+      {
+        "title": "Basics",
+        "leaves": [
+          "Alphabet",
+          "Vowel marks (harakat)",
+          "Basic reading"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Mabdal Kiraa",
+    "subtopics": [
+      {
+        "title": "Practice simple texts (A1-A2)",
+        "leaves": [
+          "Reading words",
+          "Simple sentences",
+          "Basic text comprehension"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Sarf (Word formation)",
+    "subtopics": [
+      {
+        "title": "Classical Books",
+        "leaves": [
+          "Beginner: Bina al-Af‘al",
+          "Beginner: As-Sarf lil Mubtadi’in",
+          "Intermediate: Tasrif al-Izzi (core)",
+          "Upper-Int: Meezan al-Sarf",
+          "Advanced: Shafiya / Lamiya",
+          "Expert: Mugni al-Labib"
+        ]
+      },
+      {
+        "title": "Core Topics",
+        "leaves": [
+          "Roots (جذر)",
+          "Verb patterns (باب)",
+          "Past & Present tense",
+          "Masdar (verbal noun)",
+          "Active & Passive participles",
+          "Weak verbs (الأفعال المعتلة)"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Nahu (Sentence structure)",
+    "subtopics": [
+      {
+        "title": "Classical Books",
+        "leaves": [
+          "Beginner: Ajurrumiyyah",
+          "Beginner: Mutammima al-Ajurrumiyyah",
+          "Intermediate: Nahu al-Wadih",
+          "Intermediate: Sharh Ibn Aqil (early)",
+          "Upper-Int: Qatr al-Nada",
+          "Upper-Int: Shudhur al-Dhahab",
+          "Advanced: Alfiyyah Ibn Malik"
+        ]
+      },
+      {
+        "title": "Core Topics",
+        "leaves": [
+          "Nominal vs Verbal sentences",
+          "Subject & Predicate",
+          "Grammatical cases",
+          "Particles (حروف)",
+          "Objects & Complements",
+          "I‘rab (الإعراب)"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Intermediate Texts (B1)",
+    "subtopics": [
+      {
+        "title": "Practical Application",
+        "leaves": [
+          "Adapted texts",
+          "Simple books",
+          "Applying sarf + nahu"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Books (B2+)",
+    "subtopics": [
+      {
+        "title": "Mastery",
+        "leaves": [
+          "Full books",
+          "Classical texts",
+          "Deep comprehension"
+        ]
+      }
+    ]
+  }
+]

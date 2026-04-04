@@ -32,10 +32,18 @@ Route::get('/roadmap', function () {
 // Bypass CSRF for MVP APIs
 Route::withoutMiddleware([\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class])->group(function() {
 
-    Route::get('/api/progress', function () {
-        return response()->json(
-            DB::table('user_nodes_progress')->where('completed', true)->pluck('node_id')
-        );
+    Route::get('/api/progress', function (\Illuminate\Http\Request $request) {
+        $prefix = $request->query('prefix', '');
+
+        $query = DB::table('user_nodes_progress')->where('completed', true);
+        if ($prefix) {
+            $query->where('node_id', 'like', $prefix . '%');
+        } else {
+            $query->whereNot('node_id', 'like', 'ar_%')
+                  ->whereNot('node_id', 'like', 'ns_%');
+        }
+
+        return response()->json($query->pluck('node_id'));
     });
 
     Route::post('/api/progress', function (\Illuminate\Http\Request $request) {
@@ -52,17 +60,33 @@ Route::withoutMiddleware([\Illuminate\Foundation\Http\Middleware\ValidateCsrfTok
 
     Route::post('/api/progress/bulk', function (\Illuminate\Http\Request $request) {
         $action = $request->input('action');
-        
+        $prefix = $request->input('prefix', '');
+
         if ($action === 'uncheck_all') {
-            DB::table('user_nodes_progress')->truncate();
+            if ($prefix) {
+                 DB::table('user_nodes_progress')->where('node_id', 'like', $prefix . '%')->delete();
+            } else {
+                 DB::table('user_nodes_progress')
+                   ->whereNot('node_id', 'like', 'ar_%')
+                   ->whereNot('node_id', 'like', 'ns_%')
+                   ->delete();
+            }
         } else if ($action === 'check_all') {
             $node_ids = $request->input('node_ids', []);
-            DB::table('user_nodes_progress')->truncate();
+            
+            if ($prefix) {
+                 DB::table('user_nodes_progress')->where('node_id', 'like', $prefix . '%')->delete();
+            } else {
+                 DB::table('user_nodes_progress')
+                   ->whereNot('node_id', 'like', 'ar_%')
+                   ->whereNot('node_id', 'like', 'ns_%')
+                   ->delete();
+            }
+
             $data = [];
             foreach ($node_ids as $id) {
                 $data[] = ['node_id' => $id, 'completed' => true, 'updated_at' => now()];
             }
-            // Chunk inserts if there are too many (SQLite limit)
             foreach (array_chunk($data, 100) as $chunk) {
                 DB::table('user_nodes_progress')->insert($chunk);
             }
@@ -71,4 +95,12 @@ Route::withoutMiddleware([\Illuminate\Foundation\Http\Middleware\ValidateCsrfTok
         return response()->json(['success' => true]);
     });
 
+});
+
+Route::get('/arabic-roadmap', function () {
+    return view('arabic-roadmap');
+});
+
+Route::get('/new-school-roadmap', function () {
+    return view('new-school-roadmap');
 });

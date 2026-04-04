@@ -24,119 +24,13 @@ export interface RoadmapEdge {
   to: string;
 }
 
-export const { nodes, edges, maxY } = (() => {
-  const genNodes: RoadmapNode[] = [];
-  const genEdges: RoadmapEdge[] = [];
-  
-  let currentRowY = 120;
-  let maxBottomInRow = 120;
-  
-  rawRoadmap.forEach((topic: any, i: number) => {
-    // 3 Columns per row approach
-    const row = Math.floor(i / 3);
-    const posInRow = i % 3;
-    const isLeftToRight = row % 2 === 0;
-    
-    // Keep nodes tightly positioned in 3 columns
-    const col = isLeftToRight ? posInRow : (2 - posInRow);
-    const mainX = 280 + col * 550;
-    
-    // Jump row to safe margin below the deepest container of the PREVIOUS row
-    if (posInRow === 0 && i > 0) {
-      currentRowY = maxBottomInRow + 140;
-    }
-    
-    const mainId = `m_${i}`;
-    
-    let displayTitle = topic.title;
-    if (displayTitle === "Core Go Fundamentals") {
-      displayTitle = "Go Fundamentals";
-    }
-    displayTitle = displayTitle.replace(/\s+and\s+/gi, ' & ');
-    
-    const calculatedWidth = Math.max(220, displayTitle.length * 10 + 40);
-    
-    genNodes.push({
-      id: mainId,
-      type: 'main',
-      title: displayTitle,
-      description: "Core timeframe milestone.",
-      x: mainX,
-      y: currentRowY,
-      w: calculatedWidth,
-      h: 56,
-      status: i === 0 ? 'done' : 'pending'
-    });
-    
-    if (i > 0) genEdges.push({ from: `m_${i-1}`, to: mainId });
-    
-    let leftSubY = currentRowY + 80;
-    let rightSubY = currentRowY + 80;
-    
-    topic.subtopics.forEach((sub: any, j: number) => {
-      const isLeft = j % 2 === 0;
-      const boxWidth = 260; 
-      const boxX = mainX + (isLeft ? -135 : 135);
-      
-      const titleHeight = 44;
-      const itemSpacing = 40; // 32px height + 8px gap
-      const bottomPadding = 20;
-      const containerHeight = titleHeight + (sub.leaves.length * itemSpacing) + bottomPadding;
-      
-      let startY = isLeft ? leftSubY : rightSubY;
-      const boxCenterY = startY + (containerHeight / 2);
-      
-      const subId = `s_${i}_${j}`;
-      const displaySubTitle = sub.title.replace(/\s+and\s+/gi, ' & ');
-      
-      genNodes.push({
-        id: subId,
-        type: 'container',
-        title: displaySubTitle,
-        x: boxX,
-        y: boxCenterY,
-        w: boxWidth,
-        h: containerHeight,
-        status: 'optional',
-      });
-      
-      // Smart edge routing: Main hub only branches to the TOP element in the left/right column.
-      // Every subsequent container daisy-chains strictly vertically from the container above it!
-      if (j < 2) {
-        genEdges.push({ from: mainId, to: subId });
-      } else {
-        genEdges.push({ from: `s_${i}_${j-2}`, to: subId });
-      }
-      
-      let leafY = startY + titleHeight + 16; 
-      sub.leaves.forEach((leafStr: string, k: number) => {
-        const displayLeaf = leafStr.replace(/\s+and\s+/gi, ' & ');
-        
-        genNodes.push({
-          id: `l_${i}_${j}_${k}`,
-          type: 'leaf',
-          title: displayLeaf,
-          x: boxX,
-          y: leafY,
-          w: boxWidth - 24, // Slight padding from edges
-          h: 32, // Taller, meatier pill like the reference
-          status: 'pending'
-        });
-        leafY += itemSpacing;
-      });
-      
-      if (isLeft) leftSubY += containerHeight + 24;
-      else rightSubY += containerHeight + 24;
-    });
-    
-    const treeBottom = Math.max(leftSubY, rightSubY);
-    if (treeBottom > maxBottomInRow) {
-      maxBottomInRow = treeBottom;
-    }
-  });
-  
-  return { nodes: genNodes, edges: genEdges, maxY: maxBottomInRow };
-})();
+export interface RoadmapAppProps {
+  roadmapData: any;
+  title: string;
+  badge: string;
+  subtitle: string;
+  prefix: string;
+}
 
 // ==============================
 // 2. Components
@@ -471,7 +365,122 @@ const ConfirmModal: React.FC<{
 // ==============================
 // 3. Main Export
 // ==============================
-export default function RoadmapApp() {
+export default function RoadmapApp({ 
+  roadmapData = rawRoadmap, 
+  title = "Roadmap", 
+  badge = "Go Backend", 
+  subtitle = "Complete path to Senior Level (150+ Deep Topics & Hand-crafted files)", 
+  prefix = "" 
+}: Partial<RoadmapAppProps>) {
+  const { nodes, edges, maxY } = React.useMemo(() => {
+    const genNodes: RoadmapNode[] = [];
+    const genEdges: RoadmapEdge[] = [];
+    
+    let currentRowY = 120;
+    let maxBottomInRow = 120;
+    
+    roadmapData.forEach((topic: any, i: number) => {
+      const row = Math.floor(i / 3);
+      const posInRow = i % 3;
+      const isLeftToRight = row % 2 === 0;
+      
+      const col = isLeftToRight ? posInRow : (2 - posInRow);
+      const mainX = 280 + col * 550;
+      
+      if (posInRow === 0 && i > 0) {
+        currentRowY = maxBottomInRow + 140;
+      }
+      
+      const mainId = `${prefix}m_${i}`;
+      
+      let displayTitle = topic.title;
+      if (displayTitle === "Core Go Fundamentals") {
+        displayTitle = "Go Fundamentals";
+      }
+      displayTitle = displayTitle.replace(/\s+and\s+/gi, ' & ');
+      
+      const calculatedWidth = Math.max(220, displayTitle.length * 10 + 40);
+      
+      genNodes.push({
+        id: mainId,
+        type: 'main',
+        title: displayTitle,
+        description: "Core timeframe milestone.",
+        x: mainX,
+        y: currentRowY,
+        w: calculatedWidth,
+        h: 56,
+        status: i === 0 ? 'done' : 'pending'
+      });
+      
+      if (i > 0) genEdges.push({ from: `${prefix}m_${i-1}`, to: mainId });
+      
+      let leftSubY = currentRowY + 80;
+      let rightSubY = currentRowY + 80;
+      
+      topic.subtopics.forEach((sub: any, j: number) => {
+        const isLeft = j % 2 === 0;
+        const boxWidth = 260; 
+        const boxX = mainX + (isLeft ? -135 : 135);
+        
+        const titleHeight = 44;
+        const itemSpacing = 40; 
+        const bottomPadding = 20;
+        const containerHeight = titleHeight + (sub.leaves.length * itemSpacing) + bottomPadding;
+        
+        let startY = isLeft ? leftSubY : rightSubY;
+        const boxCenterY = startY + (containerHeight / 2);
+        
+        const subId = `${prefix}s_${i}_${j}`;
+        const displaySubTitle = sub.title.replace(/\s+and\s+/gi, ' & ');
+        
+        genNodes.push({
+          id: subId,
+          type: 'container',
+          title: displaySubTitle,
+          x: boxX,
+          y: boxCenterY,
+          w: boxWidth,
+          h: containerHeight,
+          status: 'optional',
+        });
+        
+        if (j < 2) {
+          genEdges.push({ from: mainId, to: subId });
+        } else {
+          genEdges.push({ from: `${prefix}s_${i}_${j-2}`, to: subId });
+        }
+        
+        let leafY = startY + titleHeight + 16; 
+        sub.leaves.forEach((leafStr: string, k: number) => {
+          const displayLeaf = leafStr.replace(/\s+and\s+/gi, ' & ');
+          
+          genNodes.push({
+            id: `${prefix}l_${i}_${j}_${k}`,
+            type: 'leaf',
+            title: displayLeaf,
+            x: boxX,
+            y: leafY,
+            w: boxWidth - 24, 
+            h: 32, 
+            status: 'pending'
+          });
+          leafY += itemSpacing;
+        });
+        
+        if (isLeft) leftSubY += containerHeight + 24;
+        else rightSubY += containerHeight + 24;
+      });
+      
+      const treeBottom = Math.max(leftSubY, rightSubY);
+      if (treeBottom > maxBottomInRow) {
+        maxBottomInRow = treeBottom;
+      }
+    });
+    
+    return { nodes: genNodes, edges: genEdges, maxY: maxBottomInRow };
+  }, [roadmapData, prefix]);
+
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const [selectedNode, setSelectedNode] = useState<RoadmapNode | null>(null);
   const [completedNodes, setCompletedNodes] = useState<Set<string>>(new Set());
@@ -480,13 +489,13 @@ export default function RoadmapApp() {
 
   // Load MVP state from SQLite via Laravel
   useEffect(() => {
-    fetch('/api/progress')
+    fetch(`/api/progress?prefix=${prefix}`)
       .then(res => res.json())
       .then((data: string[]) => {
         setCompletedNodes(new Set(data));
       })
       .catch(err => console.error("Could not load backend progress", err));
-  }, []);
+  }, [prefix]);
 
   const toggleNodeCompletion = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -498,16 +507,18 @@ export default function RoadmapApp() {
       else newSet.delete(id);
       
       // Check if this action completed an entire container block!
-      if (isCompletedNow && id.startsWith('l_')) {
-        const match = id.match(/^l_(\d+)_(\d+)_/);
+      const regexStr = `^${prefix}l_(\\d+)_(\\d+)_`;
+      const regex = new RegExp(regexStr);
+      if (isCompletedNow && id.startsWith(`${prefix}l_`)) {
+        const match = id.match(regex);
         if (match) {
           const i = parseInt(match[1]);
           const j = parseInt(match[2]);
-          const leafCount = rawRoadmap[i].subtopics[j].leaves.length;
+          const leafCount = roadmapData[i].subtopics[j].leaves.length;
           
           let allDoneNow = true;
           for(let k=0; k<leafCount; k++) {
-            if (!newSet.has(`l_${i}_${j}_${k}`)) {
+            if (!newSet.has(`${prefix}l_${i}_${j}_${k}`)) {
               allDoneNow = false;
               break;
             }
@@ -515,7 +526,7 @@ export default function RoadmapApp() {
           
           if (allDoneNow) {
             // Revert back to precise localized SVG burst, but brighter!
-            const cNode = nodes.find(n => n.id === `s_${i}_${j}`);
+            const cNode = nodes.find(n => n.id === `${prefix}s_${i}_${j}`);
             if (cNode) {
               setActiveConfetti({ id: Date.now().toString(), x: cNode.x, y: cNode.y - (cNode.h!/2) + 20 });
               setTimeout(() => setActiveConfetti(null), 1500); // clear after 1.5s
@@ -544,7 +555,7 @@ export default function RoadmapApp() {
       fetch('/api/progress/bulk', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'uncheck_all' })
+        body: JSON.stringify({ action: 'uncheck_all', prefix })
       }).catch(err => console.error("Could not save backend progress", err));
     } else {
       const allLeafIds = leafNodes.map(n => n.id);
@@ -552,7 +563,7 @@ export default function RoadmapApp() {
       fetch('/api/progress/bulk', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'check_all', node_ids: allLeafIds })
+        body: JSON.stringify({ action: 'check_all', node_ids: allLeafIds, prefix })
       }).catch(err => console.error("Could not save backend progress", err));
     }
   };
@@ -563,10 +574,10 @@ export default function RoadmapApp() {
     <div className="w-full h-full min-h-screen bg-[#f8fafc] relative flex flex-col font-sans text-slate-900 pt-16 pb-32">
       <div className="text-center mb-10 z-10 px-4">
         <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter mb-4">
-          <span className="bg-[#fbbf24] px-3 py-1 border-2 border-slate-900 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-[-2deg] inline-block">Go Backend</span> Roadmap
+          <span className="bg-[#fbbf24] px-3 py-1 border-2 border-slate-900 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-[-2deg] inline-block">{badge}</span> {title}
         </h1>
         <p className="text-slate-600 mt-6 font-bold text-lg max-w-xl mx-auto border-b-2 border-slate-900 pb-4 inline-block">
-          Complete path to Senior Level (150+ Deep Topics & Hand-crafted files)
+          {subtitle}
         </p>
         <div className="mt-6 flex justify-center">
           <button 
@@ -598,14 +609,15 @@ export default function RoadmapApp() {
                   
                   // For containers, determine completion based on if all leaves are checked
                   if (node.type === 'container') {
-                    const match = node.id.match(/^s_(\d+)_(\d+)$/);
+                    const regexStr = `^${prefix}s_(\\d+)_(\\d+)$`;
+                    const match = node.id.match(new RegExp(regexStr));
                     if (match) {
                       const i = parseInt(match[1]);
                       const j = parseInt(match[2]);
-                      const leafCount = rawRoadmap[i].subtopics[j].leaves.length;
+                      const leafCount = roadmapData[i].subtopics[j].leaves.length;
                       isDone = true;
                       for(let k=0; k<leafCount; k++) {
-                        if (!completedNodes.has(`l_${i}_${j}_${k}`)) {
+                        if (!completedNodes.has(`${prefix}l_${i}_${j}_${k}`)) {
                           isDone = false;
                           break;
                         }

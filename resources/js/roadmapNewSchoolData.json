@@ -1,0 +1,215 @@
+[
+  {
+    "title": "Stage 0 — Foundation",
+    "subtopics": [
+      {
+        "title": "Reading Preparation",
+        "leaves": [
+          "Alphabet (letters)",
+          "Vowel marks (harakat)",
+          "Reading simple words"
+        ]
+      },
+      {
+        "title": "Goal",
+        "leaves": [
+          "Read basic Arabic without fear",
+          "Recognize letters and sounds"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "A1 — Basics",
+    "subtopics": [
+      {
+        "title": "Topics",
+        "leaves": [
+          "Greetings & introductions",
+          "Names, countries, nationalities",
+          "Classroom language",
+          "Numbers & time",
+          "Basic daily verbs"
+        ]
+      },
+      {
+        "title": "Sarf (Word Forms)",
+        "leaves": [
+          "Basic verb forms",
+          "Simple pronouns"
+        ]
+      },
+      {
+        "title": "Nahu (Grammar)",
+        "leaves": [
+          "Simple nominal sentences",
+          "Basic word order"
+        ]
+      },
+      {
+        "title": "What student can do",
+        "leaves": [
+          "Introduce himself",
+          "Ask simple questions",
+          "Understand basic phrases"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "A2 — Everyday Life",
+    "subtopics": [
+      {
+        "title": "Topics",
+        "leaves": [
+          "Family",
+          "Home",
+          "Daily routine",
+          "Food & drinks",
+          "Shopping",
+          "Directions & places"
+        ]
+      },
+      {
+        "title": "Sarf (Word Forms)",
+        "leaves": [
+          "Past & present verb usage",
+          "Common verb patterns"
+        ]
+      },
+      {
+        "title": "Nahu (Grammar)",
+        "leaves": [
+          "Subject–verb structure",
+          "Simple questions",
+          "Possession (my, your…)"
+        ]
+      },
+      {
+        "title": "What student can do",
+        "leaves": [
+          "Talk about daily life",
+          "Ask for things",
+          "Describe simple situations"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "B1 — Expanding",
+    "subtopics": [
+      {
+        "title": "Topics",
+        "leaves": [
+          "Travel",
+          "Health",
+          "Hobbies",
+          "Education",
+          "Work",
+          "Past experiences",
+          "Future plans"
+        ]
+      },
+      {
+        "title": "Sarf (Word Forms)",
+        "leaves": [
+          "Verb forms (expanded usage)",
+          "Basic derived forms"
+        ]
+      },
+      {
+        "title": "Nahu (Grammar)",
+        "leaves": [
+          "Past vs present sentences",
+          "Connectors (and, because)",
+          "Basic complex sentences"
+        ]
+      },
+      {
+        "title": "What student can do",
+        "leaves": [
+          "Hold conversations",
+          "Describe events",
+          "Explain preferences"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "B2 — Confident",
+    "subtopics": [
+      {
+        "title": "Topics",
+        "leaves": [
+          "Work & career",
+          "Problems & solutions",
+          "Opinions",
+          "Comparisons",
+          "Social issues",
+          "Technology"
+        ]
+      },
+      {
+        "title": "Sarf (Word Forms)",
+        "leaves": [
+          "Better verb control",
+          "Active / passive awareness"
+        ]
+      },
+      {
+        "title": "Nahu (Grammar)",
+        "leaves": [
+          "Structured arguments",
+          "Conditionals",
+          "Comparisons"
+        ]
+      },
+      {
+        "title": "What student can do",
+        "leaves": [
+          "Express opinions",
+          "Argue",
+          "Discuss in detail"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "C1 — Advanced",
+    "subtopics": [
+      {
+        "title": "Topics",
+        "leaves": [
+          "Abstract thinking",
+          "Culture & society",
+          "Analysis",
+          "Debate",
+          "Storytelling"
+        ]
+      },
+      {
+        "title": "Sarf (Word Forms)",
+        "leaves": [
+          "Full word patterns",
+          "Flexible usage"
+        ]
+      },
+      {
+        "title": "Nahu (Grammar)",
+        "leaves": [
+          "Advanced sentence structures",
+          "Nuance in expression",
+          "Rhetorical clarity"
+        ]
+      },
+      {
+        "title": "What student can do",
+        "leaves": [
+          "Speak fluently",
+          "Structure arguments",
+          "Understand nuance"
+        ]
+      }
+    ]
+  }
+]
